@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>todo</title>  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'style.css' %}"> 
+  <script src="{% static 'script.js' %}"></script>
+</head>
+<body> 
+  <div class="container"> 
+    <div class="head"> 
+      <form action="{% url 'addtask' %}" method="post"> 
+        {% csrf_token %}
+        <div>
+          <input type="text" name="addtask" id="addtask" autocomplete="off">
+          <button type="submit">ADD</button>
+        </div>
+      </form>
+    </div>
+    <div class="tags">
+      <input type="radio" name="rtype" id="all" checked>
+      <label for="all" onclick="funcall()">All</label>
+      <input type="radio" name="rtype" id="completed">
+      <label for="completed" onclick="funccompleted()">Completed</label>
+      <input type="radio" name="rtype" id="pending">
+      <label for="pending" onclick="funcpending()">Active</label>
+    </div>  
+    <div class="page">
+      <div class="content" id="pageall"> 
+        <table> 
+          <tbody>
+            {% for i in data %} 
+              <tr>
+                {% if i.status %} 
+                  <td><a href="{% url 'changestatus' i.id%}"><i class="bi bi-check-circle"></i><span style="text-decoration:line-through;">{{i}}</span></a></td>
+                {% else %} 
+                  <td><a href="{% url 'changestatus' i.id%}"><i class="bi bi-circle"></i><span>{{i}}</span></a></td>
+                {% endif %} 
+                <td><span class="hide"><a href="{% url 'delete' i.id %}"><i class="bi bi-trash"></i></a></span></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div> 
+      <div class="content" id="pagecompleted"> 
+        <table>
+          {% for i in data %} 
+            {% if i.status %} 
+              <tr> 
+                <td><a href="{% url 'changestatus' i.id %}"><i class="bi bi-check-circle"></i><span style="text-decoration:line-through;">{{i}}</span></a></td> 
+                <td><span class="hide"><a href="{% url 'delete' i.id %}"><i class="bi bi-trash"></i></a></span></td>
+              </tr> 
+            {% endif %}
+          {% endfor %}
+        </table>
+      </div> 
+      <div class="content" id="pagepending"> 
+        <table> 
+          {% for i in data %} 
+            {% if not i.status %} 
+            <tr class="name"> 
+              <td><a href="{% url 'changestatus' i.id%}"><i class="bi bi-circle"></i><span>{{i}}</span></a></td>
+              <td><span class="hide"><a href="{% url 'delete' i.id %}"><i class="bi bi-trash"></i></a></span></td>
+            </tr>
+            {% endif %}
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
